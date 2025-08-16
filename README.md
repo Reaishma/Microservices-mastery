@@ -2,7 +2,7 @@
 A deep dive into microservices 
 
 # Live Demo 🚀
- **click for live demo** - 
+ **click for live demo** - https://reaishma.github.io/Microservices-mastery/
 
 ## Interactive Real-time Features:
 - Real-time service monitoring with status indicators
