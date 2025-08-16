@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microservices Architecture Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #2196F3, #FF9800, #E91E63);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .icon.microservice { background: #4CAF50; }
+        .icon.infrastructure { background: #2196F3; }
+        .icon.cicd { background: #FF9800; }
+        .icon.monitoring { background: #E91E63; }
+        .icon.deployment { background: #9C27B0; }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .service-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #4CAF50;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .service-item:hover {
+            background: #e8f5e8;
+            transform: scale(1.02);
+        }
+
+        .service-item.running {
+            border-left-color: #4CAF50;
+        }
+
+        .service-item.building {
+            border-left-color: #FF9800;
+        }
+
+        .service-item.error {
+            border-left-color: #f44336;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-indicator.running { background: #4CAF50; }
+        .status-indicator.building { background: #FF9800; }
+        .status-indicator.error { background: #f44336; }
+
+        .architecture-diagram {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .diagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .layer {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .component {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 120px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .component:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .component.gateway { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .component.service { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        .component.database { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .component.infrastructure { background: linear-gradient(135deg, #9C27B0, #7B1FA2); }
+
+        .arrow {
+            font-size: 24px;
+            color: #666;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .metric {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-top: 3px solid #4CAF50;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .deployment-timeline {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #4CAF50;
+        }
+
+        .timeline-item.in-progress::before {
+            background: #FF9800;
+            box-shadow: 0 0 0 3px #FF9800;
+            animation: pulse 1.5s infinite;
+        }
+
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .timeline-item.in-progress .timeline-content {
+            border-left-color: #FF9800;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn.success { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .btn.warning { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .btn.danger { background: linear-gradient(135deg, #f44336, #d32f2f); }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .dashboard { grid-template-columns: 1fr; }
+            .layer { flex-direction: column; align-items: center; }
+            .controls { flex-direction: column; align-items: center; }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Microservices Architecture Dashboard</h1>
+            <p>AWS • Kubernetes • Docker • Terraform • Jenkins • CI/CD</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h3><span class="icon microservice">MS</span>Microservices</h3>
+                <div class="service-grid" id="microservices">
+                    <div class="service-item running" data-service="api-gateway">
+                        <div><span class="status-indicator running"></span>API Gateway</div>
+                        <small>Port: 3000</small>
+                    </div>
+                    <div class="service-item running" data-service="user-service">
+                        <div><span class="status-indicator running"></span>User Service</div>
+                        <small>Port: 3001</small>
+                    </div>
+                    <div class="service-item running" data-service="product-service">
+                        <div><span class="status-indicator running"></span>Product Service</div>
+                        <small>Port: 3002</small>
+                    </div>
+                    <div class="service-item running" data-service="order-service">
+                        <div><span class="status-indicator running"></span>Order Service</div>
+                        <small>Port: 3003</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><span class="icon infrastructure">K8</span>Infrastructure</h3>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">4</div>
+                        <div class="metric-label">Pods Running</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">2</div>
+                        <div class="metric-label">Nodes Active</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><span class="icon cicd">CI</span>CI/CD Pipeline</h3>
+                <div id="pipeline-status">
+                    <div class="service-item running">
+                        <span class="status-indicator running"></span>Build: Successful
+                    </div>
+                    <div class="service-item running">
+                        <span class="status-indicator running"></span>Tests: Passed
+                    </div>
+                    <div class="service-item running">
+                        <span class="status-indicator running"></span>Deploy: Complete
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3><span class="icon monitoring">NR</span>Monitoring</h3>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">45ms</div>
+                        <div class="metric-label">Avg Response</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">1.2k</div>
+                        <div class="metric-label">Requests/min</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.1%</div>
+                        <div class="metric-label">Error Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="architecture-diagram">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">System Architecture</h2>
+            <div class="diagram-container">
+                <div class="layer">
+                    <div class="component gateway">Load Balancer</div>
+                </div>
+                <div class="arrow">↓</div>
+                <div class="layer">
+                    <div class="component gateway">API Gateway</div>
+                </div>
+                <div class="arrow">↓</div>
+                <div class="layer">
+                    <div class="component service">User Service</div>
+                    <div class="component service">Product Service</div>
+                    <div class="component service">Order Service</div>
+                </div>
+                <div class="arrow">↓</div>
+                <div class="layer">
+                    <div class="component database">PostgreSQL</div>
+                    <div class="component database">Redis Cache</div>
+                    <div class="component database">MongoDB</div>
+                </div>
+                <div class="arrow">↓</div>
+                <div class="layer">
+                    <div class="component infrastructure">AWS EKS</div>
+                    <div class="component infrastructure">AWS RDS</div>
+                    <div class="component infrastructure">AWS ElastiCache</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="deployment-timeline">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">Deployment Timeline</h2>
+            <div class="timeline" id="deployment-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4>Infrastructure Provisioning</h4>
+                        <p>Terraform creates AWS resources (EKS, RDS, VPC)</p>
+                        <small>Completed 2 hours ago</small>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4>Docker Images Built</h4>
+                        <p>All microservices containerized and pushed to ECR</p>
+                        <small>Completed 1 hour ago</small>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4>Kubernetes Deployment</h4>
+                        <p>Services deployed to EKS cluster with auto-scaling</p>
+                        <small>Completed 30 minutes ago</small>
+                    </div>
+                </div>
+                <div class="timeline-item in-progress">
+                    <div class="timeline-content">
+                        <h4>Blue-Green Deployment</h4>
+                        <p>Switching traffic to new version...</p>
+                        <small>In progress</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn success" onclick="triggerDeployment('blue-green')">
+                🔄 Blue-Green Deploy
+            </button>
+            <button class="btn warning" onclick="triggerDeployment('canary')">
+                🐤 Canary Release
+            </button>
+            <button class="btn" onclick="runHealthCheck()">
+                ❤️ Health Check
+            </button>
+            <button class="btn danger" onclick="rollback()">
+                ⏪ Rollback
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Simulate real-time updates
+        let deploymentInProgress = false;
+        let healthCheckInterval;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            startHealthChecks();
+            updateMetrics();
+            setInterval(updateMetrics, 5000);
+        });
+
+        function startHealthChecks() {
+            healthCheckInterval = setInterval(() => {
+                const services = document.querySelectorAll('.service-item');
+                services.forEach(service => {
+                    // Simulate occasional service issues
+                    if (Math.random() < 0.05) {
+                        service.className = 'service-item error';
+                        service.querySelector('.status-indicator').className = 'status-indicator error';
+                        setTimeout(() => {
+                            service.className = 'service-item running';
+                            service.querySelector('.status-indicator').className = 'status-indicator running';
+                        }, 3000);
+                    }
+                });
+            }, 10000);
+        }
+
+        function updateMetrics() {
+            // Simulate changing metrics
+            const responseTime = Math.floor(Math.random() * 50) + 30;
+            const requests = Math.floor(Math.random() * 500) + 1000;
+            const errorRate = (Math.random() * 0.5).toFixed(1);
+
+            document.querySelector('.metric-value').textContent = responseTime + 'ms';
+            document.querySelectorAll('.metric-value')[1].textContent = (requests/1000).toFixed(1) + 'k';
+            document.querySelectorAll('.metric-value')[2].textContent = errorRate + '%';
+        }
+
+        function triggerDeployment(type) {
+            if (deploymentInProgress) {
+                alert('Deployment already in progress!');
+                return;
+            }
+
+            deploymentInProgress = true;
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<span class="loading"></span> Deploying...';
+            btn.disabled = true;
+
+            // Update pipeline status
+            updatePipelineStatus('building');
+
+            // Simulate deployment process
+            setTimeout(() => {
+                if (type === 'blue-green') {
+                    simulateBlueGreenDeployment();
+                } else if (type === 'canary') {
+                    simulateCanaryDeployment();
+                }
+                
+                setTimeout(() => {
+                    updatePipelineStatus('running');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    deploymentInProgress = false;
+                    
+                    // Add new timeline item
+                    addTimelineItem(`${type.charAt(0).toUpperCase() + type.slice(1)} deployment completed successfully`);
+                }, 3000);
+            }, 2000);
+        }
+
+        function simulateBlueGreenDeployment() {
+            const services = document.querySelectorAll('.service-item');
+            services.forEach((service, index) => {
+                setTimeout(() => {
+                    service.className = 'service-item building';
+                    service.querySelector('.status-indicator').className = 'status-indicator building';
+                    
+                    setTimeout(() => {
+                        service.className = 'service-item running';
+                        service.querySelector('.status-indicator').className = 'status-indicator running';
+                    }, 1000);
+                }, index * 500);
+            });
+        }
+
+        function simulateCanaryDeployment() {
+            const services = document.querySelectorAll('.service-item');
+            // Deploy to one service first (canary)
+            const canaryService = services[Math.floor(Math.random() * services.length)];
+            canaryService.className = 'service-item building';
+            canaryService.querySelector('.status-indicator').className = 'status-indicator building';
+            
+            setTimeout(() => {
+                canaryService.className = 'service-item running';
+                canaryService.querySelector('.status-indicator').className = 'status-indicator running';
+                
+                // Then deploy to remaining services
+                setTimeout(() => {
+                    services.forEach((service, index) => {
+                        if (service !== canaryService) {
+                            setTimeout(() => {
+                                service.className = 'service-item building';
+                                service.querySelector('.status-indicator').className = 'status-indicator building';
+                                
+                                setTimeout(() => {
+                                    service.className = 'service-item running';
+                                    service.querySelector('.status-indicator').className = 'status-indicator running';
+                                }, 800);
+                            }, index * 300);
+                        }
+                    });
+                }, 1000);
+            }, 1500);
+        }
+
+        function updatePipelineStatus(status) {
+            const pipelineItems = document.querySelectorAll('#pipeline-status .service-item');
+            pipelineItems.forEach(item => {
+                if (status === 'building') {
+                    item.className = 'service-item building';
+                    item.querySelector('.status-indicator').className = 'status-indicator building';
+                } else {
+                    item.className = 'service-item running';
+                    item.querySelector('.status-indicator').className = 'status-indicator running';
+                }
+            });
+        }
+
+        function runHealthCheck() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<span class="loading"></span> Checking...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const services = document.querySelectorAll('.service-item');
+                let healthyCount = 0;
+                
+                services.forEach(service => {
+                    if (service.className.includes('running')) {
+                        healthyCount++;
+                    }
+                });
+
+                alert(`Health Check Complete!\n${healthyCount}/${services.length} services healthy`);
+                
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                addTimelineItem(`Health check completed - ${healthyCount}/${services.length} services healthy`);
+            }, 2000);
+        }
+
+        function rollback() {
+            if (confirm('Are you sure you want to rollback to the previous version?')) {
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                
+                btn.innerHTML = '<span class="loading"></span> Rolling back...';
+                btn.disabled = true;
+
+                updatePipelineStatus('building');
+
+                setTimeout(() => {
+                    updatePipelineStatus('running');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    
+                    addTimelineItem('Rollback completed successfully');
+                    alert('Rollback completed successfully!');
+                }, 3000);
+            }
+        }
+
+        function addTimelineItem(message) {
+            const timeline = document.getElementById('deployment-timeline');
+            const newItem = document.createElement('div');
+            newItem.className = 'timeline-item';
+            newItem.innerHTML = `
+                <div class="timeline-content">
+                    <h4>Automated Action</h4>
+                    <p>${message}</p>
+                    <small>Just now</small>
+                </div>
+            `;
+            
+            // Remove in-progress class from previous items
+            const inProgressItems = timeline.querySelectorAll('.timeline-item.in-progress');
+            inProgressItems.forEach(item => item.classList.remove('in-progress'));
+            
+            timeline.appendChild(newItem);
+            
+            // Scroll to new item
+            newItem.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add click handlers for service items
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.service-item')) {
+                const serviceItem = e.target.closest('.service-item');
+                const serviceName = serviceItem.dataset.service || serviceItem.textContent.trim();
+                
+                // Simulate service details modal
+                alert(`Service: ${serviceName}\nStatus: Running\nCPU: ${Math.floor(Math.random() * 50) + 10}%\nMemory: ${Math.floor(Math.random() * 60) + 20}%\nRequests/min: ${Math.floor(Math.random() * 1000) + 100}`);
+            }
+        });
+
+        // Add component click handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('component')) {
+                const componentName = e.target.textContent;
+                const details = {
+                    'Load Balancer': 'AWS Application Load Balancer\nHealth checks: Enabled\nSSL termination: Yes',
+                    'API Gateway': 'Kong API Gateway\nRate limiting: 1000 req/min\nAuthentication: JWT',
+                    'User Service': 'Node.js + Express\nDatabase: PostgreSQL\nCache: Redis',
+                    'Product Service': 'Node.js + Express\nDatabase: MongoDB\nSearch: Elasticsearch',
+                    'Order Service': 'Node.js + Express\nDatabase: PostgreSQL\nQueue: RabbitMQ',
+                    'PostgreSQL': 'AWS RDS PostgreSQL 13\nMulti-AZ: Enabled\nBackups: Daily',
+                    'Redis Cache': 'AWS ElastiCache\nCluster mode: Enabled\nTTL: 1 hour',
+                    'MongoDB': 'MongoDB Atlas\nReplica set: 3 nodes\nSharding: Enabled',
+                    'AWS EKS': 'Kubernetes 1.21\nNodes: 3 (t3.medium)\nAuto-scaling: Enabled',
+                    'AWS RDS': 'PostgreSQL 13.7\nStorage: 100GB SSD\nConnections: 100',
+                    'AWS ElastiCache': 'Redis 6.2\nNode type: cache.t3.micro\nNodes: 2'
+                };
+                
+                alert(`${componentName}\n\n${details[componentName] || 'Component details not available'}`);
+            }
+        });
+    </script>
+</body>
+</html>
