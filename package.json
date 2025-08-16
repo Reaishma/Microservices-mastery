@@ -1,0 +1,57 @@
+{
+  "name": "microservices-aws-demo",
+  "version": "1.0.0",
+  "description": "Scalable microservices application with AWS, Kubernetes, Docker, and CI/CD",
+  "main": "index.js",
+  "scripts": {
+    "start": "node api-gateway/server.js",
+    "dev": "concurrently \"npm run dev:gateway\" \"npm run dev:user\" \"npm run dev:product\" \"npm run dev:order\"",
+    "dev:gateway": "nodemon api-gateway/server.js",
+    "dev:user": "nodemon services/user-service/server.js",
+    "dev:product": "nodemon services/product-service/server.js",
+    "dev:order": "nodemon services/order-service/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "build": "docker-compose build",
+    "deploy:dev": "kubectl apply -f k8s/dev/",
+    "deploy:prod": "kubectl apply -f k8s/prod/",
+    "terraform:init": "cd terraform && terraform init",
+    "terraform:plan": "cd terraform && terraform plan",
+    "terraform:apply": "cd terraform && terraform apply"
+  },
+  "keywords": [
+    "microservices",
+    "aws",
+    "kubernetes",
+    "docker",
+    "terraform",
+    "jenkins",
+    "cicd"
+  ],
+  "author": "DevOps Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "morgan": "^1.10.0",
+    "dotenv": "^16.3.1",
+    "axios": "^1.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "mongoose": "^7.5.0",
+    "pg": "^8.11.3",
+    "redis": "^4.6.8",
+    "winston": "^3.10.0",
+    "prometheus-client": "^1.0.0",
+    "newrelic": "^10.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "concurrently": "^8.2.0",
+    "jest": "^29.6.4",
+    "supertest": "^6.3.3",
+    "eslint": "^8.48.0",
+    "prettier": "^3.0.3"
+  }
+}
