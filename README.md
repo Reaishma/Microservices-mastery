@@ -1,12 +1,13 @@
 # Microservices-mastery
 A deep dive into microservices 
+
 ## Interactive Real-time Features:
-Real-time service monitoring with status indicators
-Architecture visualization showing the complete system flow
-Deployment timeline with progress tracking
-Interactive controls for Blue-Green and Canary deployments
-Live metrics simulation (response times, request counts, error rates)
-Health check functionality with visual feedback
+- Real-time service monitoring with status indicators
+- Architecture visualization showing the complete system flow
+- Deployment timeline with progress tracking
+- Interactive controls for Blue-Green and Canary deployments
+- Live metrics simulation (response times, request counts, error rates)
+- Health check functionality with visual feedback
 ## 🏗️ Complete Microservices Architecture:
 ### User Services:
 API Gateway (Port 3000) - Request routing, authentication, rate limiting
