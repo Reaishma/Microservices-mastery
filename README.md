@@ -1,2 +1,39 @@
 # Microservices-mastery
 A deep dive into microservices 
+Real-time Features:
+RFeatureseepal-time service monitoring with status indicators
+Architecture visualization showing the complete system flow
+Deployment timeline with progress tracking
+Interactive controls for Blue-Green and Canary deployments
+Live metrics simulation (response times, request counts, error rates)
+Health check functionality with visual feedback
+## 🏗️ Complete Microservices Architecture:
+Core Services:
+API Gateway (Port 3000) - Request routing, authentication, rate limiting
+User Service (Port 3001) - User management with PostgreSQL
+Product Service (Port 3002) - Product catalog with MongoDB
+Order Service (Port 3003) - Order processing with PostgreSQL
+Infrastructure Components:
+Docker containers for each service with health checks
+Docker Compose orchestration with networking
+PostgreSQL & MongoDB databases
+Redis caching layer
+Nginx load balancer
+Prometheus monitoring
+Grafana dashboards
+## 🚀 Key Features Implemented:
+Production-Ready Code:
+JWT authentication & authorization
+Input validation & error handling
+Database connection pooling
+Health check endpoints
+Metrics collection for monitoring
+Proper logging and security headers
+DevOps Best Practices:
+Multi-stage Docker builds
+Non-root container users
+Health checks in containers
+Environment-based configuration
+Proper service discovery
+This is fully interactive - you can click on services to see details, trigger deployments, run health checks, and watch real-time metrics updates. All the backend services are properly structured with REST APIs, database integration, and monitoring endpoints.
+
