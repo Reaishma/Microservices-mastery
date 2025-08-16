@@ -1,7 +1,7 @@
 # Microservices-mastery
 A deep dive into microservices 
-Real-time Features:
-RFeatureseepal-time service monitoring with status indicators
+## Interactive Real-time Features:
+Real-time service monitoring with status indicators
 Architecture visualization showing the complete system flow
 Deployment timeline with progress tracking
 Interactive controls for Blue-Green and Canary deployments
@@ -11,9 +11,9 @@ Health check functionality with visual feedback
 ### User Services:
 API Gateway (Port 3000) - Request routing, authentication, rate limiting
 ### Product Service (Port 3001) - User management with PostgreSQL
-Product Service (Port 3002) - Product catalog with MongoDB
-Order Service (Port 3003) - Order processing with PostgreSQL
-Infrastructure Components:
+### Product Service (Port 3002) - Product catalog with MongoDB
+### Order Service (Port 3003) - Order processing with PostgreSQL
+## Infrastructure Components:
 Docker containers for each service with health checks
 Docker Compose orchestration with networking
 PostgreSQL & MongoDB databases
