@@ -11,7 +11,7 @@ A deep dive into microservices
 ## 🏗️ Complete Microservices Architecture:
 ### User Services:
 API Gateway (Port 3000) - Request routing, authentication, rate limiting
-### Product Service (Port 3001) - User management with PostgreSQL
+-  Product Service (Port 3001) - User management with PostgreSQL
 ### Product Service (Port 3002) - Product catalog with MongoDB
 ### Order Service (Port 3003) - Order processing with PostgreSQL
 ## Infrastructure Components:
