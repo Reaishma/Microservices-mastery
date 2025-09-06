@@ -51,5 +51,5 @@ A deep dive into microservices
 - Environment-based configuration
 - Proper service discovery
 
-This is fully interactive - you can click on services to see details, trigger deployments, run health checks, and watch real-time metrics updates. All the backend services are properly structured with REST APIs, database integration, and monitoring endpoints.
+**This is fully interactive - you can click on services to see details, trigger deployments, run health checks, and watch real-time metrics updates. All the backend services are properly structured with REST APIs, database integration, and monitoring endpoints**
 
