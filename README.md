@@ -42,6 +42,9 @@ A deep dive into microservices
 - Proper logging and security headers
 
 ## DevOps Best Practices:
+
+![Deployment](https://github.com/Reaishma/Microservices-mastery/blob/main/chrome_screenshot_Sep%206%2C%202025%2011_17_31%20AM%20GMT%2B05_30.png)
+
 - Multi-stage Docker builds
 - Non-root container users
 - Health checks in containers
